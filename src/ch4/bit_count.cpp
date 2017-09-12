@@ -18,6 +18,7 @@ int count_bits(int num) {
   }
   return bit_count;
 }
+
 int main(int argc, char* argv[]) {
   int test_num = random_number(1, 1000);
   std::bitset<16> bit_rep(test_num);

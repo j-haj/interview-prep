@@ -30,12 +30,6 @@ int random_int(const int low, const int high) {
 int swap_bits(const int value, const int i, const int j) {
   int bit_i = (value & (1 << i)) == 0 ? 0 : 1;
   int bit_j = (value & (1 << j)) == 0 ? 0 : 1;
-  // Note: we want the following:
-  //    i  j  value[i]  value[j]
-  //    1  1    1          1
-  //    1  0    0          1
-  //    0  1    1          0
-  //    0  0    0          0
   int result = (value & ~(1 << i)) | (bit_j << i);
   result &= ~(1 << j);
   result |= (bit_i << j);

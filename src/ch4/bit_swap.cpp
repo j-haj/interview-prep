@@ -27,13 +27,12 @@ int random_int(const int low, const int high) {
  *
  * @return the result of swapping bits i and j within a given number
  */
-int swap_bits(const int value, const int i, const int j) {
-  int bit_i = (value & (1 << i)) == 0 ? 0 : 1;
-  int bit_j = (value & (1 << j)) == 0 ? 0 : 1;
-  int result = (value & ~(1 << i)) | (bit_j << i);
-  result &= ~(1 << j);
-  result |= (bit_i << j);
-  return result;
+int swap_bits(int value, const int i, const int j) {
+  if (((value >> i) & 1) != ((value >> j) & 1)) {
+    auto bit_mask = (1 << i) | (1 << j);
+    value ^= bit_mask;
+  }
+  return value;
 }
 
 int main(int argc, char* argv[]) {

@@ -1,8 +1,25 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <set>
 #include <unordered_map>
 
+/**
+ * Problem Description:
+ * Find the longest subsequence with no repeating characters in the given
+ * string.
+ */
+std::string longest_subsequence(const std::string& s) {
+  auto sequence_tracker = std::unordered_map<std::string, size_t>();
+  return "";
+}
+
+/**
+ * Problem Description:
+ * Determine the length of the longest subsequence with no
+ * repeated characters. Note that we don't need to know the actual subsequence
+ * in this case, only how long it is.
+ */
 size_t size_of_longest_subseq(const std::string& s) {
   size_t max_seen = 0;
   auto tracker = std::set<char>();

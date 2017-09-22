@@ -31,7 +31,8 @@ void run_test_cases() {
     {"c", 1},
     {"abca", 3},
     {"ababc", 3},
-    {"abcdaf", 5}
+    {"abcdaf", 5},
+    {"", 0}
   };
 
   for (const auto& x : test_cases) {

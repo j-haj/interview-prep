@@ -13,17 +13,20 @@ size_t size_of_longest_subseq(const std::string& s) {
       if (tracker.size() > max_seen) {
         max_seen = tracker.size();
       }
-      tracker.clear();
     } else {
       tracker.insert(s[i]);
     }
+  }
+  // Check tracker size one last time
+  if (tracker.size() > max_seen) {
+    max_seen = tracker.size();
   }
   return max_seen;
 }
 
 void run_test_cases() {
   std::unordered_map<std::string, size_t> test_cases = {
-    {"abab", 1},
+    {"abab", 2},
     {"abc", 3},
     {"c", 1},
     {"abca", 3},

@@ -10,8 +10,27 @@
  * string.
  */
 std::string longest_subsequence(const std::string& s) {
-  auto sequence_tracker = std::unordered_map<std::string, size_t>();
-  return "";
+  auto tracker = std::set<char>();
+  std::string max_subseq;
+  std::string cur_subseq;
+
+  for (auto c : s) {
+    auto it = tracker.find(c);
+    if (it != tracker.end()) {
+      // Found repeat
+      if (cur_subseq.size() > max_subseq.size()) {
+        max_subseq = cur_subseq;
+      }
+      cur_subseq.erase(0, 1);
+    } else {
+      tracker.insert(c);
+    }
+    cur_subseq += c;
+  }
+  if (cur_subseq.size() > max_subseq.size()) {
+    max_subseq = cur_subseq;
+  }
+  return max_subseq;
 }
 
 /**
@@ -41,7 +60,7 @@ size_t size_of_longest_subseq(const std::string& s) {
   return max_seen;
 }
 
-void run_test_cases() {
+void run_size_test_cases() {
   std::unordered_map<std::string, size_t> test_cases = {
     {"abab", 2},
     {"abc", 3},
@@ -61,7 +80,30 @@ void run_test_cases() {
   }
 }
 
+void run_subseq_test_cases() {
+  std::unordered_map<std::string, std::string> test_cases = {
+    {"abab", "ab"},
+    {"abc", "abc"},
+    {"c", "c"},
+    {"abca", "abc"},
+    {"ababc", "abc"},
+    {"abcdaf", "bcdaf"},
+    {"", ""}
+  };
+
+  for (const auto& x : test_cases) {
+    std::string actual = longest_subsequence(x.first);
+    std::string expected = x.second;
+    std::string result = actual == expected ? "[PASS]" : "[FAIL]";
+    std::cout << result << " Test case: " << x.first << '\n';
+    std:: cout << "\tActual: " << actual << "\n\tExpected: " << expected << std::endl;
+  }
+}
+
 int main(int argc, char* argv[]) {
-  run_test_cases();
+  std::cout << "Size tests\n";
+  run_size_test_cases();
+  std::cout << "\nSubsequence tests\n";
+  run_subseq_test_cases();
   return EXIT_SUCCESS;
 }

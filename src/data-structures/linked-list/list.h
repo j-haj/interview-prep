@@ -34,7 +34,7 @@ class Node {
   std::unique_ptr<T> val_;
 
   /// Points to the next node
-  std::unique_ptr<Node> next_;
+  std::shared_ptr<Node> next_;
 
 };  // class Node
 
@@ -49,7 +49,7 @@ class List {
    * @param val value to add
    */
   void push_back(const T val) {
-    tail_.set_next(std::make_unique(Node<T>(val)));
+    tail_.set_next(std::make_shared(Node<T>(val)));
   }
 
   /**
@@ -67,7 +67,7 @@ class List {
    */
   T& operator[](size_t n) const {
     if (n >= size_) {
-      std::string_stream err_msg = "Attempted to access index "
+      std::stringstream err_msg = "Attempted to access index "
                                    << n << " but list only has " << size_
                                    << " elements.";
       throw std::out_of_range(err_msg);
@@ -76,7 +76,7 @@ class List {
     size_t current_index{0};
     auto tmp = head_; // can't do this if head_ is unique_ptr
     while (current_index < n) {
-      tmp = temp.next();
+      tmp = tmp.next();
       ++current_index;
     }
     return tmp;
@@ -84,13 +84,13 @@ class List {
 
  private:
   /// Reference to the head of the list
-  std::unique_ptr<Node<T>> head_;
+  std::shared_ptr<Node<T>> head_;
 
   /// Reference to the tail of the list
-  std::unique_ptr<Node<T>> tail_;
+  std::shared_ptr<Node<T>> tail_;
 
   /// Number of elements in the list
-  size_t size{0};
+  size_t size_{0};
 
-}  // class List
+};  // class List
 #endif  // __LIST_H

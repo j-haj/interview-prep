@@ -1,7 +1,14 @@
 #include <iostream>
 #include <map>
 #include <vector>
-
+template <typename T>
+void print_row(std::vector<T>& v) {
+  std::cout << "[ ";
+  for (auto& x : v) {
+    std::cout << x << ", ";
+  }
+  std::cout << "]\n";
+}
 /**
  * Returns the longest common substring between two strings
  *
@@ -17,21 +24,37 @@ std::string longest_common_substring(const std::string& a, const std::string& b)
 
   for (auto i = 0; i < a.size(); ++i) {
     for (auto j = 0; j < b.size(); ++j) {
-      if (a[i] == b[j]) {
-        if (i == 0 || j == 0) {
-          current_row[j] = 1;
-        } else {
-          current_row[j] = prior_row[j - 1];
-        }
+      if (a[i] != b[j]) {
+        current_row[j] = 0;
+      }
+      if (i == 0 || j == 0) {
+        current_row[j] = 1;
+      } else {
+        current_row[j] = prior_row[j - 1] + 1;
       }
     }
+    std::cout << "prior: ";
+    print_row(prior_row);
+    std::cout << "current: ";
+    print_row(current_row);
+    std::cout << "Swapping...\n";
     prior_row.swap(current_row);
+    std::cout << "prior: ";
+    print_row(prior_row);
+    std::cout << "current: ";
+    print_row(current_row);
   }
+  int prior_val = 0;
+  std::string result = "";
   for (auto& x : current_row) {
-    std::cout << x << ",";
+    if (x == prior_val + 1) {
+      result += a[x];
+      prior_val = x;
+    } else {
+      break;
+    }
   }
-  std::cout << std::endl;
-  return "";
+  return result; 
 }
 
 /**
@@ -39,7 +62,9 @@ std::string longest_common_substring(const std::string& a, const std::string& b)
  */
 void run_tests() {
   // Tests
-  std::map<std::string, std::pair<std::string, std::string>> test_cases = {{"aba", std::make_pair("abab", "baba")}};
+  std::map<std::string, std::pair<std::string, std::string>> test_cases = {
+    {"aba", std::make_pair("abab", "baba")},
+    {"abcdez", std::make_pair("zxabcdezy", "yzabcdezx")}};
 
   // Run
   for (auto& x : test_cases) {

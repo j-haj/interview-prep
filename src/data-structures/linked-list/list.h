@@ -42,6 +42,12 @@ template <typename T>
 class List {
  public:
   // Constructor/Destructors
+  List() : head_(nullptr), tail_(nullptr), size_(0) {}
+
+  ~List() {
+    ~head_;
+    ~tail_;
+  }
 
   /**
    * Add element to the linked list.
@@ -50,6 +56,10 @@ class List {
    */
   void push_back(const T val) {
     tail_.set_next(std::make_shared(Node<T>(val)));
+    tail_ = tail_.next();
+    if (head_ == nullptr) {
+      head_ = tail_;
+    }
   }
 
   /**

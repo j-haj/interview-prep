@@ -20,7 +20,7 @@ class Node {
   /**
    * Set the next node
    */
-  void set_next(const Node<T>& n) { next_ = std::make_unique<Node<T>>(n); }
+  void set_next(const Node<T>& n) { next_ = std::make_shared<Node<T>>(n); }
 
   /**
    * Get reference to the next node
@@ -34,7 +34,7 @@ class Node {
   std::unique_ptr<T> val_;
 
   /// Points to the next node
-  std::shared_ptr<Node> next_;
+  std::shared_ptr<Node<T>> next_ = std::shared_ptr<Node<T>>();
 
 };  // class Node
 
@@ -77,10 +77,11 @@ class List {
    */
   T& operator[](size_t n) const {
     if (n >= size_) {
-      std::stringstream err_msg = "Attempted to access index "
-                                   << n << " but list only has " << size_
-                                   << " elements.";
-      throw std::out_of_range(err_msg);
+      std::stringstream err_msg;
+      err_msg << "Attempted to access index "
+              << n << " but list only has " << size_
+              << " elements.";
+      throw std::out_of_range(err_msg.str());
     }
     // Traverse the list until we hit the desired index
     size_t current_index{0};

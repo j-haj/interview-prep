@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <random>
 #include <string>
@@ -63,6 +64,27 @@ class ArbitraryPrecisionInt {
       return ArbitraryPrecisionInt(output);
     }
 
+    ArbitraryPrecisionInt multiply(const ArbitraryPrecisionInt& aRhs) const noexcept {
+      std::vector<short> output(aRhs.size() + vals_.size());
+      const short sign = vals_[0] < 0 ^ aRhs.vals_[0] < 0 ? -1 : 1;
+      short carry {0};
+      auto out_size = output.size();
+      for (size_t i = aRhs.size() - 1; i >= 0; --i) {
+        for (size_t j = vals_.size() - 1; j >= 0; --j) {
+          output[i + j + 1] += aRhs.vals_[i] * vals_[j];
+          carry = (output[i + j + 1] - (output[i + j +1] % 10)) / 10;
+          output[i + j] += carry;
+          output[i + j + 1] %= 10;
+        }
+      }
+
+      auto first_non_zero = std::find_if_not(std::begin(output), std::end(output),
+          [](short x) { return x == 0; });
+      output = std::vector<short>(first_non_zero, std::end(output));
+      output[0] *= sign;
+      return output;
+    }
+
     size_t size() const noexcept {
       return vals_.size();
     }
@@ -89,6 +111,9 @@ int main(int argc, char* argv[]) {
 
   auto result = v1.add(v2);
   std::cout << "Result of sum: " << result.str() << '\n';
+
+  auto mult_res = v1.multiply(v2);
+  std::cout << "Result of multiplication: " << mult_res.str() << '\n';
 
   return EXIT_SUCCESS;
 }

@@ -9,7 +9,9 @@ std::string can_obtain(const std::string& initial, const std::string& target) {
     return "Possible";
   }
   auto loc = target.find(initial);
-  if (loc == std::string::npos) {
+  std::string initial_rev(initial.rbegin(), initial.rend());
+  auto loc_rev = target.find(initial_rev);
+  if (loc == std::string::npos && loc_rev == std::string::npos) {
     return "Impossible";
   }
 
@@ -18,24 +20,23 @@ std::string can_obtain(const std::string& initial, const std::string& target) {
     return "Possible";
   }
 
-  std::string initial_rev(initial.rbegin(), initial.rend());
   result = can_obtain(initial_rev + "B", target);
   return result;
 }
 
 void run_tests() {
 
-  std::unordered_map<std::pair<std::string, std::string>, std::string> test_cases = {
-    {std::make_pair("ab", "abb"), "Impossible"},
-    {std::make_pair("bbab", "ababababb"), "Impossible"},
-    {std::make_pair("BBBBABABBBBBBA", "BBBBABABBABBBBBBABABBBBBBBBABAABBBAA"),
-      "Possible"}
+  std::unordered_map<std::string, std::pair<std::string, std::string>> test_cases = {
+    {"abb", std::make_pair("ab", "Impossible")},
+    {"ababababb", std::make_pair("bbab", "Impossible")},
+    {"BBBBABABBABBBBBBABABBBBBBBBABAABBBAA",
+      std::make_pair("BBBBABABBBBBBA", "Possible")}
   };
 
   for (auto& x : test_cases) {
-    std::string initial, target;
-    std::tie(initial, target) = x.first;
-    auto expected = x.second;
+    auto target = x.first;
+    std::string initial, expected;
+    std::tie(initial, expected) = x.second;
     auto result = can_obtain(initial, target);
     std::string res_str = expected == result ? "[PASS]" : "[FAIL]";
     std::cout << res_str << " Test case: " << initial << " -> " << target

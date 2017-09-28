@@ -4,30 +4,33 @@
 #include <memory>
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 
 template <typename T>
 class Node {
  public:
-  Node(const T val) : val_(std::make_unique(val)) {}
+  Node(const T val) : val_(std::move(val)) {}
 
   ~Node() = default;
 
   /**
    * Getter for the data stored in the node
    */
-  T data() { return *val_; }
+  T data() { return val_.get(); }
 
   /**
    * Set the next node
    */
-  void set_next(const Node<T>& n) { next_ = std::make_shared<Node<T>>(n); }
+  void set_next(Node<T>& n) { next_ = std::make_shared<Node<T>>(n); }
 
   /**
    * Get reference to the next node
    */
-  T& next() const {
-    return *next_;
-  }
+  Node& next() const { return *next_; }
+
+  /**
+   * Copy assignment
+   */
 
  private:
   /// Stores data for the node
@@ -55,11 +58,37 @@ class List {
    * @param val value to add
    */
   void push_back(const T val) {
-    tail_.set_next(std::make_shared(Node<T>(val)));
-    tail_ = tail_.next();
+    tail_->set_next(std::make_shared(new Node<T>(val)));
+    tail_ = tail_->next();
     if (head_ == nullptr) {
       head_ = tail_;
     }
+    ++size;
+  }
+
+  /**
+   * Add element to beginning of list
+   *
+   * @param val value of data to be inserted to head of list
+   */
+  void insert(const T val) {
+    auto tmp = new Node<T>(val);
+    tmp.set_next(head_);
+    head_ = std::make_shared(tmp);
+    if (tail_ == nullptr) {
+      tail_ = head_;
+    }
+    ++size;
+  }
+
+  void print_list() {
+    auto tmp = head_;
+    std::cout << "[ ";
+    while (tmp != nullptr) {
+      std::cout << tmp->data() << " ";
+      tmp = tmp->next();
+    }
+    std::cout << "]\n";
   }
 
   /**
@@ -78,14 +107,13 @@ class List {
   T& operator[](size_t n) const {
     if (n >= size_) {
       std::stringstream err_msg;
-      err_msg << "Attempted to access index "
-              << n << " but list only has " << size_
-              << " elements.";
+      err_msg << "Attempted to access index " << n << " but list only has "
+              << size_ << " elements.";
       throw std::out_of_range(err_msg.str());
     }
     // Traverse the list until we hit the desired index
     size_t current_index{0};
-    auto tmp = head_; // can't do this if head_ is unique_ptr
+    auto tmp = head_;  // can't do this if head_ is unique_ptr
     while (current_index < n) {
       tmp = tmp.next();
       ++current_index;
@@ -103,5 +131,5 @@ class List {
   /// Number of elements in the list
   size_t size_{0};
 
-};  // class List
+};      // class List
 #endif  // __LIST_H

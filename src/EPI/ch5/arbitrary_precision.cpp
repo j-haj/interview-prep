@@ -65,19 +65,20 @@ class ArbitraryPrecisionInt {
     }
 
     ArbitraryPrecisionInt multiply(const ArbitraryPrecisionInt& aRhs) const noexcept {
-      std::vector<short> output(aRhs.size() + vals_.size());
+      std::vector<short> output(aRhs.vals_.size() + vals_.size());
       const short sign = vals_[0] < 0 ^ aRhs.vals_[0] < 0 ? -1 : 1;
       short carry {0};
       auto out_size = output.size();
-      for (size_t i = aRhs.size() - 1; i >= 0; --i) {
-        for (size_t j = vals_.size() - 1; j >= 0; --j) {
-          output[i + j + 1] += aRhs.vals_[i] * vals_[j];
-          carry = (output[i + j + 1] - (output[i + j +1] % 10)) / 10;
-          output[i + j] += carry;
-          output[i + j + 1] %= 10;
+      for (size_t i = 0; i < aRhs.size(); ++i) {
+        for (size_t j = 0; j < vals_.size(); ++j) {
+          const size_t aRhsIdx = aRhs.size() - i - 1;
+          const size_t thisIdx = vals_.size() - j - 1;
+          output[aRhsIdx + thisIdx + 1] += aRhs.vals_[aRhsIdx] * vals_[thisIdx];
+          carry = (output[aRhsIdx + thisIdx + 1] - (output[aRhsIdx + thisIdx +1] % 10)) / 10;
+          output[aRhsIdx + thisIdx] += carry;
+          output[aRhsIdx + thisIdx + 1] %= 10;
         }
       }
-
       auto first_non_zero = std::find_if_not(std::begin(output), std::end(output),
           [](short x) { return x == 0; });
       output = std::vector<short>(first_non_zero, std::end(output));
@@ -87,6 +88,13 @@ class ArbitraryPrecisionInt {
 
     size_t size() const noexcept {
       return vals_.size();
+    }
+  
+    friend std::ostream& operator<<(std::ostream& o, const ArbitraryPrecisionInt& i) {
+      for (const auto& x : i.vals_) {
+        o << x;
+      }
+      return o;
     }
 
     std::string str() const noexcept {
@@ -101,16 +109,16 @@ class ArbitraryPrecisionInt {
     std::vector<short> vals_;
 
 }; // class ArbitraryPrecisionInt
+
 int main(int argc, char* argv[]) {
+  auto v1 = ArbitraryPrecisionInt(create_random_vector(3));
+  auto v2 = ArbitraryPrecisionInt(create_random_vector(3));
 
-  auto v1 = ArbitraryPrecisionInt(create_random_vector(5));
-  auto v2 = ArbitraryPrecisionInt(create_random_vector(5));
-
-  std::cout << "First arbitrary int: " << v1.str() << '\n';
-  std::cout << "Second arbitrary int: " << v2.str() << '\n';
+  std::cout << "First arbitrary int: " << v1 << '\n';
+  std::cout << "Second arbitrary int: " << v2 << '\n';
 
   auto result = v1.add(v2);
-  std::cout << "Result of sum: " << result.str() << '\n';
+  std::cout << "Result of sum: " << result << '\n';
 
   auto mult_res = v1.multiply(v2);
   std::cout << "Result of multiplication: " << mult_res.str() << '\n';

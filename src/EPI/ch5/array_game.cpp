@@ -21,6 +21,22 @@ bool is_reachable_helper(const std::vector<size_t>& v, const size_t pos) {
   return false;
 }
 
+bool efficient_is_reachable(const std::vector<size_t>& v) {
+  if (v.size() == 0) { return true; }
+  auto max_reachable {v[0]};
+  size_t prior_idx {0};
+  for (size_t i = 0; i < v.size(); ++i) {
+    const auto x = v[i];
+    const auto new_reachable = x + i;
+    if (new_reachable > max_reachable && i <= prior_idx + max_reachable) {
+      max_reachable = new_reachable;
+      prior_idx = i;
+    } else if (i > prior_idx + max_reachable) {
+      return false;
+    }
+  }
+  return true;
+}
 bool is_reachable(const std::vector<size_t>& v) {
   return is_reachable_helper(v, 0);
 }
@@ -48,13 +64,17 @@ void test_cases() {
   };
   for (const auto& test_case : test_cases) {
     const bool actual = is_reachable(test_case.second.first);
+    const bool efficient_actual = efficient_is_reachable(test_case.second.first);
     const bool expected = test_case.second.second;
     const std::string actual_str = actual ? "true" : "false";
+    const std::string efficient_actual_str = efficient_actual ? "true" : "false";
     const std::string expected_str = expected ? "true" : "false";
-    std::string result = expected == actual ? "[PASS]" : "[FAIL]";
+    std::string result = (expected == actual) && (efficient_actual == actual) ? "[PASS]" : "[FAIL]";
     std::cout << result << " for test case: " << test_case.first << '\n';
     std::cout << "\tExpected: " << expected_str << "\n\tActual: " << actual_str << '\n';
+    std::cout << "\tEfficient actual: " << efficient_actual_str << '\n';
   }
+
 }
 int main(int argc, char* argv[]) {
   test_cases();

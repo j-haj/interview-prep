@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include <random>
 #include <vector>
 
@@ -52,15 +53,30 @@ std::vector<T> max_subsequence(const std::vector<T>& v) {
   // Find max sum
   size_t max_idx = 0;
   size_t min_idx = 0;
-  T max_seen;
-  T min_seen;
+  size_t min_sofar_idx = 0;
+  T max_seen {std::numeric_limits<T>::max()};
+  T min_seen {std::numeric_limits<T>::min()};
+  T min_seen_sofar {std::numeric_limits<T>::min()};
   for (size_t i = 0; i < partial_sums.size(); ++i) {
-    
+    if (partial_sums[i] > max_seen) {
+      max_idx = i;
+      max_seen = partial_sums[i];
+      if (i > min_sofar_idx) {
+        min_seen = min_seen_sofar;
+        min_idx = min_sofar_idx;
+      }
+    } else if (partial_sums[i] < min_seen) {
+      min_sofar_idx = i;
+      min_seen_sofar = partial_sums[i];
+    }
   }
+  return std::vector<T>(v.begin() + min_idx, v.begin() + max_idx);
 }
 
 int main(int argc, char* argv[]) {
   auto v = random_sequence(10);
   print_vector(v);
+  auto res = max_subsequence(v);
+  print_vector(res);
   return EXIT_SUCCESS;
 }

@@ -46,30 +46,26 @@ void print_vector(const std::vector<T>& v) {
 
 template <typename T>
 std::vector<T> max_subsequence(const std::vector<T>& v) {
-  std::vector<T> partial_sums(v.size());
-  for (size_t i = 0; i < v.size(); ++i) {
-    partial_sums[i] = i == 0 ? v[i] : v[i] + partial_sums[i - 1];
-  }
+  if (v.size() == 1) { return v; }
+
   // Find max sum
   size_t max_idx = 0;
   size_t min_idx = 0;
-  size_t min_sofar_idx = 0;
-  T max_seen {std::numeric_limits<T>::max()};
-  T min_seen {std::numeric_limits<T>::min()};
-  T min_seen_sofar {std::numeric_limits<T>::min()};
-  for (size_t i = 0; i < partial_sums.size(); ++i) {
-    if (partial_sums[i] > max_seen) {
+  size_t current_min_idx = 0;
+  T max_so_far {std::numeric_limits<T>::min()};
+  T max_seen {std::numeric_limits<T>::min()};
+  T prior_max_seen {std::numeric_limits<T>::min()};
+
+  for (size_t i = 1; i < v.size(); ++i) {
+    max_so_far = std::max(max_so_far, max_so_far + v[i]);
+    prior_max_seen = max_seen;
+    max_seen = std::max(max_seen, max_so_far);
+    if (prior_max_seen != max_seen) {
       max_idx = i;
-      max_seen = partial_sums[i];
-      if (i > min_sofar_idx) {
-        min_seen = min_seen_sofar;
-        min_idx = min_sofar_idx;
-      }
-    } else if (partial_sums[i] < min_seen) {
-      min_sofar_idx = i;
-      min_seen_sofar = partial_sums[i];
+      min_idx = current_min_idx;
     }
   }
+
   return std::vector<T>(v.begin() + min_idx, v.begin() + max_idx);
 }
 

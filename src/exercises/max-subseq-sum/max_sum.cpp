@@ -49,19 +49,32 @@ std::vector<T> max_subsequence(const std::vector<T>& v) {
   if (v.size() == 1) { return v; }
 
   // Find max sum
-  size_t max_idx = 0;
-  size_t min_idx = 0;
-  size_t current_min_idx = 0;
-  T max_so_far {std::numeric_limits<T>::min()};
+  size_t max_idx {0};
+  size_t min_idx {0};
+  size_t current_min_idx {0};
+  size_t current_max_idx {0};
+  T max_sofar {std::numeric_limits<T>::min()};
   T max_seen {std::numeric_limits<T>::min()};
   T prior_max_seen {std::numeric_limits<T>::min()};
+  T min_sofar {std::numeric_limits<T>::max()};
+  T prior_min_seen {std::numeric_limits<T>::max()};
 
   for (size_t i = 1; i < v.size(); ++i) {
-    max_so_far = std::max(max_so_far, max_so_far + v[i]);
+    max_sofar = std::max(max_sofar, max_sofar + v[i]);
     prior_max_seen = max_seen;
-    max_seen = std::max(max_seen, max_so_far);
+    max_seen = std::max(max_seen, max_sofar);
     if (prior_max_seen != max_seen) {
       max_idx = i;
+    }
+    if (v[i] < min_sofar) {
+      min_sofar = v[i];
+      current_min_idx = i;
+    }
+    if (v[i] < max_sofar &&
+        max_sofar - min_sofar > prior_max_seen - prior_min_seen) {
+      prior_max_seen = max_sofar;
+      max_idx = current_max_idx;
+      prior_min_seen = min_sofar;
       min_idx = current_min_idx;
     }
   }

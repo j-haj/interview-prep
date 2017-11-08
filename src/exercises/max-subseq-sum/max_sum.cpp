@@ -63,22 +63,16 @@ std::vector<T> max_subsequence(const std::vector<T>& v) {
     max_sofar = std::max(max_sofar, max_sofar + v[i]);
     prior_max_seen = max_seen;
     max_seen = std::max(max_seen, max_sofar);
-    if (prior_max_seen != max_seen) {
-      max_idx = i;
-    }
-    if (v[i] < min_sofar) {
-      min_sofar = v[i];
-      current_min_idx = i;
-    }
-    if (v[i] < max_sofar &&
-        max_sofar - min_sofar > prior_max_seen - prior_min_seen) {
-      prior_max_seen = max_sofar;
+    if (max_sofar < 0) {
+      max_sofar = 0;
       max_idx = current_max_idx;
-      prior_min_seen = min_sofar;
       min_idx = current_min_idx;
+      current_min_idx = i + 1;
+    } else if (prior_max_seen != max_seen) {
+      current_max_idx = i;
     }
   }
-
+  std::cout << "(min, max) = (" << min_idx << ", " << max_idx << ")\n";
   return std::vector<T>(v.begin() + min_idx, v.begin() + max_idx);
 }
 

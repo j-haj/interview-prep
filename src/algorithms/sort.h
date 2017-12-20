@@ -13,6 +13,7 @@ void printer(Iter begin, Iter end) {
   }
   std::cout << '\n';
 }
+
 template <class Iter>
 void mergesort(Iter begin, Iter end) {
   std::cout << "( " << *begin << ", " << *(end - 1) << ")\t";

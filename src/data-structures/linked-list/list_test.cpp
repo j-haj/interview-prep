@@ -1,8 +1,9 @@
 #include <iostream>
 
 #include "list.h"
+#include "pod_list.h"
 
-int main(int argc, char* argv[]) {
+void list() {
   auto n = Node<int>(5);
   std::cout << "Node value: " << n.data << '\n';
   List<int> test = List<int>();
@@ -18,5 +19,19 @@ int main(int argc, char* argv[]) {
 	t2.insert(1.9);
 	t2.push_back(9.0);
 	t2.print_list();
+}
+
+void pod_list() {
+  LinkedList<int> l;
+  l.insert(1);
+  l.insert(3);
+  l.insert(7);
+  std::cout << l << '\n';
+  l.remove(3);
+  std::cout << l << '\n';
+}
+
+int main(int argc, char* argv[]) {
+  pod_list();
   return EXIT_SUCCESS;
 }

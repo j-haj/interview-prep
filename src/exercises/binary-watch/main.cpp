@@ -30,9 +30,9 @@ void recursive_searcher(std::size_t n, std::size_t current,
     return;
   }
   // outer loop handles hours
-  for (std::size_t i = 1; i < 4; ++i) {
+  for (std::size_t i = 0; i < 4; ++i) {
     // inner loop handles minutes
-    for (std::size_t j = 1; j < 6; ++j) {
+    for (std::size_t j = 0; j < 6; ++j) {
       hours.insert(i);
       recursive_searcher(n, current - 1, hours, minutes, results);
       minutes.insert(j);

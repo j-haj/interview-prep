@@ -1,4 +1,5 @@
 #include <cctype>
+#include <cmath>
 #include <cstring>
 #include <iostream>
 #include <stack>
@@ -49,7 +50,7 @@ double eval(std::string_view expr) {
         auto x = nums.top(); nums.pop();
         auto y = nums.top(); nums.pop();
         Ops op = operations.top(); operations.pop();
-        nums.push(evaluate(x, y, op));
+        nums.push(evaluate(y, x, op));
         break;
       }
       case '+':
@@ -73,9 +74,16 @@ double eval(std::string_view expr) {
   return nums.top();
 }
 
+void TEST(std::string_view expr, double expected) {
+  double actual = eval(expr);
+  const double eps = 1e-9;
+  auto prefix = std::abs(actual - expected) < eps ? "[PASS]" : "[FAIL]";
+  std::cout << prefix << " : expected " << expected << " got " << actual << std::endl;
+}
 
 int main() {
-  std::cout << eval("(1.2 3.1 *)") << std::endl;
-  std::cout << eval("(3 (4 2.1 /) *)") << std::endl;
+  TEST("(1.2 3.1 *)", 1.2 * 3.1);
+  TEST("(3 (4 2.1 /) *)", (4 / 2.1 * 3));
+  TEST("((3 (4 2.1 /) *) (1.2 3.1 *) +)", (4 / 2.1 * 3) + 1.2 * 3.1);
   return 0;
 }

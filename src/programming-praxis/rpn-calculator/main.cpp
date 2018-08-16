@@ -74,7 +74,7 @@ double eval(std::string_view expr) {
   return nums.top();
 }
 
-void TEST(std::string_view expr, double expected) {
+void check(std::string_view expr, double expected) {
   double actual = eval(expr);
   const double eps = 1e-9;
   auto prefix = std::abs(actual - expected) < eps ? "[PASS]" : "[FAIL]";
@@ -82,8 +82,8 @@ void TEST(std::string_view expr, double expected) {
 }
 
 int main() {
-  TEST("(1.2 3.1 *)", 1.2 * 3.1);
-  TEST("(3 (4 2.1 /) *)", (4 / 2.1 * 3));
-  TEST("((3 (4 2.1 /) *) (1.2 3.1 *) +)", (4 / 2.1 * 3) + 1.2 * 3.1);
+  check("(1.2 3.1 *)", 1.2 * 3.1);
+  check("(3 (4 2.1 /) *)", (4 / 2.1 * 3));
+  check("((3 (4 2.1 /) *) (1.2 3.1 *) +)", (4 / 2.1 * 3) + 1.2 * 3.1);
   return 0;
 }

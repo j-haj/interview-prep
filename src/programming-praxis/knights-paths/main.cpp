@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -19,8 +20,7 @@ BoardCache new_board_cache(std::size_t board_size) {
   return b;
 }
 
-std::size_t recursive_moves_helper(std::size_t n, std::size_t board_size, Position p, BoardCache& m) {
-  std::cout << "(n = " << n << ") Position: (" << p.row << ", " << p.col << ")\n";
+std::size_t recursive_moves_helper(std::size_t n, std::size_t board_size, const Position& p, BoardCache& m) {
   if (n <= 0) return 0;
   auto& lookup = m[p.row][p.col];
 
@@ -32,25 +32,25 @@ std::size_t recursive_moves_helper(std::size_t n, std::size_t board_size, Positi
   std::size_t down_left = 0;
   std::size_t down_right = 0;
   // Move left
-  if (p.col - 2 >= 0) {
+  if (p.col>= 2) {
     // Move up
-    if (p.row - 1 >= 0) {
+    if (p.row >= 1) {
       up_left = 1 + recursive_moves_helper(n-1, board_size, Position{p.row-1, p.col-2}, m);
     }
     // Move down
-    if (p.row + 1 < board_size) {
+    if (p.row < board_size - 1) {
       down_left = 1 + recursive_moves_helper(n-1, board_size, Position{p.row+1, p.col-2}, m);
     }
   }
 
   // Move right
-  if (p.col + 2 < board_size) {
+  if (p.col < board_size - 2) {
     // Move up
-    if (p.row - 1 >= 0) {
+    if (p.row >= 1) {
       up_right = 1 + recursive_moves_helper(n-1, board_size, Position{p.row-1, p.col+2}, m);
     }
     // Move down
-    if (p.row + 1 < board_size) {
+    if (p.row < board_size - 1) {
       down_right = 1 + recursive_moves_helper(n-1, board_size, Position{p.row+1, p.col+2}, m);
     }
   }
@@ -66,13 +66,21 @@ std::size_t recursive_moves_helper(std::size_t n, std::size_t board_size, Positi
  */
 std::size_t knights_moves(std::size_t board_size, std::size_t n) {
   BoardCache b = new_board_cache(board_size);
-  Position start_pos(0, 0);
+  Position start_pos{0, 0};
   return recursive_moves_helper(n, board_size, start_pos, b);
 }
 
 
 int main() {
-  std::cout << "Number of length 3 moves on a 3x3 board: " << knights_moves(3, 3) << std::endl;
-  std::cout << "Number of length 3 moves on a 5x5 board: " << knights_moves(5, 3) << std::endl;
+  auto start = std::chrono::steady_clock::now();
+  std::cout << "Number of length 15 moves on a 10x10 board: " << knights_moves(15, 10);
+  auto stop = std::chrono::steady_clock::now();
+  std::chrono::duration<double> elapsed = stop - start;
+  std::cout << " in " << elapsed.count() << "s\n";
+  start = std::chrono::steady_clock::now();
+  std::cout << "Number of length 15 moves on a 15x15 board: " << knights_moves(15, 15);
+  stop = std::chrono::steady_clock::now();
+  elapsed = stop - start;
+  std::cout << " in " << elapsed.count() << "s\n"; 
   return 0;
 }

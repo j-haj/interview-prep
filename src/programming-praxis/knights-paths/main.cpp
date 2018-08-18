@@ -31,27 +31,46 @@ std::size_t recursive_moves_helper(std::size_t n, std::size_t board_size, const 
   std::size_t up_right = 0;
   std::size_t down_left = 0;
   std::size_t down_right = 0;
-  // Move left
   if (p.col>= 2) {
-    // Move up
+    // Move up left
     if (p.row >= 1) {
       up_left = 1 + recursive_moves_helper(n-1, board_size, Position{p.row-1, p.col-2}, m);
     }
-    // Move down
+    // Move down left
     if (p.row < board_size - 1) {
       down_left = 1 + recursive_moves_helper(n-1, board_size, Position{p.row+1, p.col-2}, m);
     }
   }
 
-  // Move right
   if (p.col < board_size - 2) {
-    // Move up
+    // Move up right
     if (p.row >= 1) {
       up_right = 1 + recursive_moves_helper(n-1, board_size, Position{p.row-1, p.col+2}, m);
     }
-    // Move down
+    // Move down right
     if (p.row < board_size - 1) {
       down_right = 1 + recursive_moves_helper(n-1, board_size, Position{p.row+1, p.col+2}, m);
+    }
+  }
+
+  if (p.row >= 2) {
+    // Move up left
+    if (p.col >= 1) {
+      up_left += 1 + recursive_moves_helper(n-1, board_size, Position{p.row-2, p.col-1}, m);
+    }
+    // Move up right
+    if (p.col < board_size - 1) {
+      up_right += 1 + recursive_moves_helper(n-1, board_size, Position{p.row-2, p.col+1}, m);
+    }
+  }
+  if (p.row < board_size - 2) {
+    // Move down left
+    if (p.col >= 1) {
+      down_left += 1 + recursive_moves_helper(n-1, board_size, Position{p.row+2, p.col-1}, m);
+    }
+    // Move down right
+    if (p.col < board_size - 1) {
+      down_right += 1 + recursive_moves_helper(n-1, board_size, Position{p.row+2, p.col+1}, m);
     }
   }
 
@@ -73,12 +92,12 @@ std::size_t knights_moves(std::size_t board_size, std::size_t n) {
 
 int main() {
   auto start = std::chrono::steady_clock::now();
-  std::cout << "Number of length 15 moves on a 10x10 board: " << knights_moves(15, 10);
+  std::cout << "Number of length 10 moves on a 10x10 board: " << knights_moves(2, 10);
   auto stop = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed = stop - start;
   std::cout << " in " << elapsed.count() << "s\n";
   start = std::chrono::steady_clock::now();
-  std::cout << "Number of length 15 moves on a 15x15 board: " << knights_moves(15, 15);
+  std::cout << "Number of length 10 moves on a 15x15 board: " << knights_moves(15, 15);
   stop = std::chrono::steady_clock::now();
   elapsed = stop - start;
   std::cout << " in " << elapsed.count() << "s\n"; 

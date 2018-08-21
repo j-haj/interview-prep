@@ -1,0 +1,14 @@
+plugins {
+  id 'java'
+  id 'application'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.apache.commons:commons-lang3:3.4'
+}
+
+mainClassName = "KSum"
